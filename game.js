@@ -40,3 +40,24 @@ function draw() {
     rect((player2_piece2_col*tileSize + tileSize/4), (player2_piece2_row*tileSize + tileSize/4), (tileSize/2), (tileSize/2)); 
     rect((player2_piece3_col*tileSize + tileSize/4), (player2_piece3_row*tileSize + tileSize/4), (tileSize/2), (tileSize/2)); 
 }
+
+function mousePressed() {
+    const row = Math.floor(mouseY / tileSize);
+    const col = Math.floor(mouseX / tileSize);
+    
+    // Check if the clicked square is adjacent to the current position of the piece; if it is, move the piece
+    if((!player1_piece1_active) && (player1_piece1_row === row && player1_piece1_col === col)) { fill(player1_color_active); rect((player1_piece1_col*tileSize + tileSize/4), (player1_piece1_row*tileSize + tileSize/4), (tileSize/2), (tileSize/2)); player1_piece1_active = true; }
+    else if(player1_piece1_active && ((Math.abs(row - player1_piece1_row) === 1 && col === player1_piece1_col) || (Math.abs(col - player1_piece1_col) === 1 && row === player1_piece1_row))) { player1_piece1_row = row; player1_piece1_col = col; redraw(); player1_piece1_active = false; }
+    if((!player1_piece2_active) && (player1_piece2_row === row && player1_piece2_col === col)) { fill(player1_color_active); rect((player1_piece2_col*tileSize + tileSize/4), (player1_piece2_row*tileSize + tileSize/4), (tileSize/2), (tileSize/2)); player1_piece2_active = true; }
+    else if(player1_piece2_active && ((Math.abs(row - player1_piece2_row) === 1 && col === player1_piece2_col) || (Math.abs(col - player1_piece2_col) === 1 && row === player1_piece2_row))) { player1_piece2_row = row; player1_piece2_col = col; redraw(); player1_piece2_active = false; }
+    if((!player1_piece3_active) && (player1_piece3_row === row && player1_piece3_col === col)) { fill(player1_color_active); rect((player1_piece3_col*tileSize + tileSize/4), (player1_piece1_row*tileSize + tileSize/4), (tileSize/2), (tileSize/2)); player1_piece3_active = true; }
+    else if(player1_piece3_active && ((Math.abs(row - player1_piece1_row) === 1 && col === player1_piece3_col) || (Math.abs(col - player1_piece3_col) === 1 && row === player1_piece1_row))) { player1_piece1_row = row; player1_piece3_col = col; redraw(); player1_piece3_active = false; }
+    
+    if((!player2_piece1_active) && (player2_piece1_row === row && player2_piece1_col === col)) { fill(player2_color_active); rect((player2_piece1_col*tileSize + tileSize/4), (player2_piece1_row*tileSize + tileSize/4), (tileSize/2), (tileSize/2)); player2_piece1_active = true; }
+    else if(player2_piece1_active && ((Math.abs(row - player2_piece1_row) === 1 && col === player2_piece1_col) || (Math.abs(col - player2_piece1_col) === 1 && row === player2_piece1_row))) { player2_piece1_row = row; player2_piece1_col = col; redraw(); player2_piece1_active = false; }
+    if((!player2_piece2_active) && (player2_piece2_row === row && player2_piece2_col === col)) { fill(player2_color_active); rect((player2_piece2_col*tileSize + tileSize/4), (player2_piece1_row*tileSize + tileSize/4), (tileSize/2), (tileSize/2)); player2_piece2_active = true; }
+    else if(player2_piece2_active && ((Math.abs(row - player2_piece2_row) === 1 && col === player2_piece2_col) || (Math.abs(col - player2_piece2_col) === 1 && row === player2_piece1_row))) { player2_piece1_row = row; player2_piece2_col = col; redraw(); player2_piece2_active = false; }
+    if((!player2_piece3_active) && (player2_piece3_row === row && player2_piece3_col === col)) { fill(player2_color_active); rect((player2_piece3_col*tileSize + tileSize/4), (player2_piece1_row*tileSize + tileSize/4), (tileSize/2), (tileSize/2)); player2_piece3_active = true; }
+    else if(player2_piece3_active && ((Math.abs(row - player2_piece3_row) === 1 && col === player2_piece3_col) || (Math.abs(col - player2_piece3_col) === 1 && row === player2_piece1_row))) { player2_piece1_row = row; player2_piece3_col = col; redraw(); player2_piece3_active = false; }
+
+}

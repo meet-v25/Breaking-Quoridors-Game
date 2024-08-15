@@ -7,7 +7,7 @@ let player1_rem_walls = 6; let player2_rem_walls = 6;
 let player1_rem_hammers = 2; let player2_rem_hammers = 2; 
 
 let panel_x_loc = tileSize * (numCols+0.25); let panel_y_loc = 0; 
-let panel_width = 250; let panel_height = tileSize * 10; 
+let panel_width = 250; let panel_height = tileSize * 5; 
 
 let box_width = 90; let box_height = 30; 
 let title_offset = 50; let player1_offset = 300; let player2_offset = 100; 
@@ -39,8 +39,7 @@ let player1_piece1_active = false; let player1_piece2_active = false; let player
 /* FUNCTIONS */
 
 function setup() { 
-    // createCanvas((tileSize * numCols + panel_width + 30), Math.max(tileSize * numRows, panel_height)); 
-    createCanvas((tileSize * numCols + panel_width + 30), (tileSize * numRows)); 
+    createCanvas((tileSize * numCols + panel_width + 30), Math.max(tileSize * numRows, panel_height)); 
     noLoop(); 
 }
 
@@ -151,19 +150,18 @@ function cell_empty(row,col) {
 }
 
 function path_blocked(r1,c1,r2,c2) {
-    for (let index=0; index < Walls_List.length; index+=1) {
+    console.log(r1, c1, r2, c2);
+    for (let index=0; index<Walls_List.length; index+=1) {
         let [wr1,wc1,wr2,wc2,color] = Walls_List[index]; 
         let [x1,y1,x2,y2] = [wr1-1,wc1-1,wr2-1,wc2-1]; 
-        
-        if ((y2-y1)===1) {      // Horizontal
-            if( (c1===c2) && ( ((x1===r1) && (y1===c1)) || ((x1===r2) && (y1===c2)) || ((x2===r1) && (y2===c1)) || ((x2===r2) && (y2===c2)) )) 
-            { return true; }    // c1=c2 means vertical jump over horizontal wall
-        } 
-        if ((x2-x1)===1) {      // Vertical
-            if( (r1===r2) && ( ((x1===r1) && (y1===c1)) || ((x1===r2) && (y1===c2)) || ((x2===r1) && (y2===c1)) || ((x2===r2) && (y2===c2)) )) 
-            { return true; }    // r1=r2 means horizontal jump over vertical wall
-        }
-    } return false; 
+        // console.log(wr1,wc1,wr2,wc2);
+        if( ( ((r2-r1)===1)  &&  ((x1===r1) && (x1===x2))  &&  (((y1===c1) || (y2===c1)) && (c1===c2)) ) ||
+            ( ((r1-r2)===1)  &&  ((x1===r2) && (x1===x2))  &&  (((y1===c1) || (y2===c1)) && (c1===c2)) ) ||
+            ( ((c2-c1)===1)  &&  ((y1===c1) && (y1===y2))  &&  (((x1===r1) || (x2===r1)) && (r1===r2)) ) ||
+            ( ((c1-c2)===1)  &&  ((y1===c2) && (y1===y2))  &&  (((x1===r1) || (x2===r1)) && (r1===r2)) ) )
+            { return true; }
+        else { return false; }
+    }
 }
 
 
@@ -186,6 +184,8 @@ function mousePressed() {
         // NORMAL PLAY ON BOARD
         if(!weapon_active) {
             // Logic to Move the Pieces ; 6 if blocks = 6 pieces
+            
+            console.log(player_turn);
 
             if          ((!piece_active) && (player_turn===1) && (player1_piece1_row === board_row && player1_piece1_col === board_col)) { 
                 fill(player1_piece_color_active); rect((player1_piece1_col*tileSize + tileSize/4), (player1_piece1_row*tileSize + tileSize/4), (tileSize/2), (tileSize/2)); 
@@ -195,10 +195,9 @@ function mousePressed() {
             else if     ((player1_piece1_active) && ((Math.abs(board_row - player1_piece1_row) === 1 && board_col === player1_piece1_col) || 
                         (Math.abs(board_col - player1_piece1_col) === 1 && board_row === player1_piece1_row)) && 
                         (cell_empty(board_row,board_col)) && (!path_blocked(player1_piece1_row,player1_piece1_col,board_row,board_col))) { 
-                player1_piece1_row = board_row; player1_piece1_col = board_col; redraw(); player1_piece1_active = false; turn_change(); 
+                player1_piece1_row = board_row; player1_piece1_col = board_col; redraw(); player1_piece1_active = false; player_turn=2; 
             }
 
-            if(1) {
             if          ((!piece_active) && (player_turn===1) && (player1_piece2_row === board_row && player1_piece2_col === board_col)) { 
                 fill(player1_piece_color_active); rect((player1_piece2_col*tileSize + tileSize/4), (player1_piece2_row*tileSize + tileSize/4), (tileSize/2), (tileSize/2)); 
                 player1_piece2_active = true; 
@@ -207,7 +206,7 @@ function mousePressed() {
             } else if   ((player1_piece2_active) && ((Math.abs(board_row - player1_piece2_row) === 1 && board_col === player1_piece2_col) || 
                         (Math.abs(board_col - player1_piece2_col) === 1 && board_row === player1_piece2_row)) && 
                         (cell_empty(board_row,board_col)) && (!path_blocked(player1_piece2_row,player1_piece2_col,board_row,board_col))) { 
-                player1_piece2_row = board_row; player1_piece2_col = board_col; redraw(); player1_piece2_active = false; turn_change(); }
+                player1_piece2_row = board_row; player1_piece2_col = board_col; redraw(); player1_piece2_active = false; player_turn=2;  }
             
             if          ((!piece_active) && (player_turn===1) && (player1_piece3_row === board_row && player1_piece3_col === board_col)) { 
                 fill(player1_piece_color_active); rect((player1_piece3_col*tileSize + tileSize/4), (player1_piece3_row*tileSize + tileSize/4), (tileSize/2), (tileSize/2)); 
@@ -217,7 +216,7 @@ function mousePressed() {
             } else if   ((player1_piece3_active) && ((Math.abs(board_row - player1_piece3_row) === 1 && board_col === player1_piece3_col) || 
                         (Math.abs(board_col - player1_piece3_col) === 1 && board_row === player1_piece3_row)) && 
                         (cell_empty(board_row,board_col)) && (!path_blocked(player1_piece3_row,player1_piece3_col,board_row,board_col))) { 
-                player1_piece3_row = board_row; player1_piece3_col = board_col; redraw(); player1_piece3_active = false; turn_change(); }
+                player1_piece3_row = board_row; player1_piece3_col = board_col; redraw(); player1_piece3_active = false; player_turn=2;  }
             
             if          ((!piece_active) && (player_turn===2) && (player2_piece1_row === board_row && player2_piece1_col === board_col)) { 
                 fill(player2_piece_color_active); rect((player2_piece1_col*tileSize + tileSize/4), (player2_piece1_row*tileSize + tileSize/4), (tileSize/2), (tileSize/2)); 
@@ -226,8 +225,8 @@ function mousePressed() {
                 player2_piece1_row = board_row; player2_piece1_col = board_col; redraw(); player2_piece1_active = false; 
             } else if   ((player2_piece1_active) && ((Math.abs(board_row - player2_piece1_row) === 1 && board_col === player2_piece1_col) || 
                         (Math.abs(board_col - player2_piece1_col) === 1 && board_row === player2_piece1_row)) && 
-                        (cell_empty(board_row,board_col)) && (!path_blocked(player2_piece1_row,player1_piece1_col,board_row,board_col))) { 
-                player2_piece1_row = board_row; player2_piece1_col = board_col; redraw(); player2_piece1_active = false; turn_change(); }
+                        (cell_empty(board_row,board_col)) && (!path_blocked(player2_piece1_row,player2_piece1_col,board_row,board_col))) { 
+                player2_piece1_row = board_row; player2_piece1_col = board_col; redraw(); player2_piece1_active = false; player_turn=1;  }
             
             if          ((!piece_active) && (player_turn===2) && (player2_piece2_row === board_row && player2_piece2_col === board_col)) { 
                 fill(player2_piece_color_active); rect((player2_piece2_col*tileSize + tileSize/4), (player2_piece2_row*tileSize + tileSize/4), (tileSize/2), (tileSize/2)); 
@@ -236,8 +235,8 @@ function mousePressed() {
                 player2_piece2_row = board_row; player2_piece2_col = board_col; redraw(); player2_piece2_active = false; 
             } else if   ((player2_piece2_active) && ((Math.abs(board_row - player2_piece2_row) === 1 && board_col === player2_piece2_col) || 
                         (Math.abs(board_col - player2_piece2_col) === 1 && board_row === player2_piece2_row)) && 
-                        (cell_empty(board_row,board_col)) && (!path_blocked(player2_piece2_row,player1_piece2_col,board_row,board_col))) { 
-                player2_piece2_row = board_row; player2_piece2_col = board_col; redraw(); player2_piece2_active = false; turn_change(); }
+                        (cell_empty(board_row,board_col)) && (!path_blocked(player2_piece2_row,player2_piece2_col,board_row,board_col))) { 
+                player2_piece2_row = board_row; player2_piece2_col = board_col; redraw(); player2_piece2_active = false; player_turn=1; }
             
             if          ((!piece_active) && (player_turn===2) && (player2_piece3_row === board_row && player2_piece3_col === board_col)) { 
                 fill(player2_piece_color_active); rect((player2_piece3_col*tileSize + tileSize/4), (player2_piece3_row*tileSize + tileSize/4), (tileSize/2), (tileSize/2)); 
@@ -246,9 +245,8 @@ function mousePressed() {
                 player2_piece3_row = board_row; player2_piece3_col = board_col; redraw(); player2_piece3_active = false; 
             } else if   ((player2_piece3_active) && ((Math.abs(board_row - player2_piece3_row) === 1 && board_col === player2_piece3_col) || 
                         (Math.abs(board_col - player2_piece3_col) === 1 && board_row === player2_piece3_row)) && 
-                        (cell_empty(board_row,board_col)) && (!path_blocked(player2_piece3_row,player1_piece3_col,board_row,board_col))) { 
-                player2_piece3_row = board_row; player2_piece3_col = board_col; redraw(); player2_piece3_active = false; turn_change(); }
-            }
+                        (cell_empty(board_row,board_col)) && (!path_blocked(player2_piece3_row,player2_piece3_col,board_row,board_col))) { 
+                player2_piece3_row = board_row; player2_piece3_col = board_col; redraw(); player2_piece3_active = false; player_turn=1; }
         }
 
         // WEAPON PLAY ON BOARD
@@ -267,7 +265,7 @@ function mousePressed() {
                     if(!wall_already_exist) {
                         Walls_List.push([wall_row, wall_col, wall_row, wall_col+1, player1_wall_color]); 
                         Blocked_Wall_Positions.push([wall_row, wall_col]); Blocked_Wall_Positions.push([wall_row, wall_col+1]); 
-                        player1_rem_walls -= 1; player1_using_wall = "N"; turn_change(); 
+                        player1_rem_walls -= 1; player1_using_wall = "N"; player_turn=2; 
                         draw_Walls(); draw_Panel(); draw_Text("#FFFFFF"); redraw(); 
                     }
                 }
@@ -282,7 +280,7 @@ function mousePressed() {
                     if(!wall_already_exist) {
                         Walls_List.push([wall_row, wall_col, wall_row+1, wall_col, player1_wall_color]); 
                         Blocked_Wall_Positions.push([wall_row, wall_col]); Blocked_Wall_Positions.push([wall_row+1, wall_col]); 
-                        player1_rem_walls -= 1; player1_using_wall = "N"; turn_change(); 
+                        player1_rem_walls -= 1; player1_using_wall = "N"; player_turn=2; 
                         draw_Walls(); draw_Panel(); draw_Text("#FFFFFF"); redraw(); 
                     }
                 }
@@ -296,7 +294,7 @@ function mousePressed() {
                     if(index_to_remove!==-1) {
                         Walls_List.splice(index_to_remove,1); 
                         Blocked_Wall_Positions.splice(2*index_to_remove,1); Blocked_Wall_Positions.splice(2*index_to_remove,1); 
-                        player1_rem_hammers -= 1; player1_using_hammer = "N"; turn_change(); 
+                        player1_rem_hammers -= 1; player1_using_hammer = "N"; player_turn=2; 
                         draw_Walls(); draw_Panel(); draw_Text("#FFFFFF"); redraw(); 
                     }
                 }
@@ -310,7 +308,7 @@ function mousePressed() {
                     if(index_to_remove!==-1) {
                         Walls_List.splice(index_to_remove,1); 
                         Blocked_Wall_Positions.splice(2*index_to_remove,1); Blocked_Wall_Positions.splice(2*index_to_remove,1); 
-                        player1_rem_hammers -= 1; player1_using_hammer = "N"; turn_change(); 
+                        player1_rem_hammers -= 1; player1_using_hammer = "N"; player_turn=2; 
                         draw_Walls(); draw_Panel(); draw_Text("#FFFFFF"); redraw(); 
                     }
                 }
@@ -324,7 +322,7 @@ function mousePressed() {
                     if(!wall_already_exist) {
                         Walls_List.push([wall_row, wall_col, wall_row, wall_col+1, player2_wall_color]); 
                         Blocked_Wall_Positions.push([wall_row, wall_col]); Blocked_Wall_Positions.push([wall_row, wall_col+1]); 
-                        player2_rem_walls -= 1; player2_using_wall = "N"; turn_change(); 
+                        player2_rem_walls -= 1; player2_using_wall = "N"; player_turn=1; 
                         draw_Walls(); draw_Panel(); draw_Text("#FFFFFF"); redraw(); 
                     }
                 }
@@ -338,7 +336,7 @@ function mousePressed() {
                     if(!wall_already_exist) {
                         Walls_List.push([wall_row, wall_col, wall_row+1, wall_col, player2_wall_color]); 
                         Blocked_Wall_Positions.push([wall_row, wall_col]); Blocked_Wall_Positions.push([wall_row+1, wall_col]); 
-                        player2_rem_walls -= 1; player2_using_wall = "N"; turn_change(); 
+                        player2_rem_walls -= 1; player2_using_wall = "N"; player_turn=1; 
                         draw_Walls(); draw_Panel(); draw_Text("#FFFFFF"); redraw(); 
                     }
                 }
@@ -352,7 +350,7 @@ function mousePressed() {
                     if(index_to_remove!==-1) {
                         Walls_List.splice(index_to_remove,1); 
                         Blocked_Wall_Positions.splice(2*index_to_remove,1); Blocked_Wall_Positions.splice(2*index_to_remove,1); 
-                        player2_rem_hammers -= 1; player2_using_hammer = "N"; turn_change(); 
+                        player2_rem_hammers -= 1; player2_using_hammer = "N"; player_turn=1; 
                         draw_Walls(); draw_Panel(); draw_Text("#FFFFFF"); redraw(); 
                     }
                 }
@@ -366,7 +364,7 @@ function mousePressed() {
                     if (index_to_remove!==-1) {
                         Walls_List.splice(index_to_remove,1); 
                         Blocked_Wall_Positions.splice(2*index_to_remove,1); Blocked_Wall_Positions.splice(2*index_to_remove,1); 
-                        player2_rem_hammers -= 1; player2_using_hammer = "N"; turn_change(); 
+                        player2_rem_hammers -= 1; player2_using_hammer = "N"; player_turn=1; 
                         draw_Walls(); draw_Panel(); draw_Text("#FFFFFF"); redraw(); 
                     }
                 }
